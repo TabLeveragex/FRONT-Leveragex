@@ -1,0 +1,13 @@
+.congrats-page {
+  min-height: calc(100vh - var(--nav-height));
+  background: var(--bg-primary);
+}
+
+.congrats-success-wrap {
+  width: 100%;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}

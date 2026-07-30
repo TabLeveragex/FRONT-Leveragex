@@ -1,0 +1,230 @@
+.pnl-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.pnl-hero {
+  margin-bottom: 0.5rem;
+}
+
+.pnl-container {
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.history-link-btn {
+  margin-top: 1rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.95rem;
+  align-self: flex-end;
+}
+
+.liquidation-warning {
+  grid-column: 1 / -1;
+  margin-bottom: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.12);
+  color: #fecaca;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.portfolio {
+  display: grid;
+  gap: 1rem;
+}
+
+.position-window {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.Profit-Loss {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.total-name {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.moving-pnl {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.moving-pnl.positive {
+  color: var(--accent);
+}
+
+.moving-pnl.negative {
+  color: var(--danger);
+}
+
+.sec-box {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.sec-box p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.stockName {
+  grid-column: 1 / -1;
+  font-size: 1.05rem !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+}
+
+.sec-box span {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+}
+
+.sell-btn {
+  justify-self: start;
+  padding: 0.7rem 1.25rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--danger);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.sell-btn:hover {
+  opacity: 0.9;
+}
+
+.balance-updt {
+  position: sticky;
+  top: calc(var(--nav-height) + 1rem);
+}
+
+.balance-folder,
+.leverage-balance {
+  width: 100%;
+}
+
+.leverage-balance {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+}
+
+.company-name {
+  margin: 0 0 1rem;
+  font-size: 1.5rem;
+}
+
+.company-name span {
+  color: var(--accent);
+}
+
+.balance span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.balance p {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 1.75rem;
+  color: var(--accent);
+}
+
+.payout-btn {
+  width: 100%;
+  margin-top: 1rem !important;
+  border-radius: var(--radius-sm) !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+}
+
+.pending-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 12, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.pending-popup-card {
+  width: min(360px, 100%);
+  padding: 1.75rem;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.pending-popup-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  margin: 0 0 1rem;
+  color: var(--warning);
+  font-size: 1.15rem;
+}
+
+.pending-popup-card p {
+  margin: 0.35rem 0;
+  color: var(--text-secondary);
+}
+
+.pending-popup-close {
+  margin-top: 1.25rem;
+  padding: 0.65rem 1.25rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--gradient-brand);
+  color: #041016;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .pnl-container {
+    grid-template-columns: 1fr;
+  }
+
+  .balance-updt {
+    position: static;
+  }
+}

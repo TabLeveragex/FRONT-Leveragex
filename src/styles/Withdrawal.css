@@ -1,0 +1,137 @@
+.withdrawal-page {
+  min-height: calc(100vh - var(--nav-height));
+  padding: 2rem 1.25rem 3rem;
+  background: var(--bg-primary);
+}
+
+.withdrawal-container {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.withdrawal-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.withdrawal-eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.withdrawal-header h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  color: var(--text-primary);
+}
+
+.withdrawal-subtitle {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.withdrawal-card {
+  padding: 1.5rem;
+}
+
+.withdrawal-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.withdrawal-field label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.withdrawal-field input,
+.withdrawal-field select {
+  width: 100%;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+}
+
+.withdrawal-field input:focus,
+.withdrawal-field select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.withdrawal-submit {
+  margin-top: 0.5rem;
+}
+
+.withdrawal-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.withdrawal-item {
+  padding: 1rem 1.1rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.withdrawal-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.withdrawal-item-name {
+  margin: 0;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.withdrawal-item-amount {
+  margin: 0;
+  color: var(--text-primary);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.withdrawal-item-meta {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.withdrawal-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.withdrawal-status.completed {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.withdrawal-status.pending {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+}
+
+.withdrawal-empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 2rem 1rem;
+}

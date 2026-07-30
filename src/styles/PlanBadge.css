@@ -1,0 +1,78 @@
+.plan-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.plan-badge-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.plan-badge-large .plan-badge-icon-wrap {
+  width: 56px;
+  height: 56px;
+}
+
+.plan-badge-small .plan-badge-icon-wrap {
+  width: 40px;
+  height: 40px;
+}
+
+.plan-badge-icon {
+  font-size: 1.25rem;
+}
+
+.plan-badge-large .plan-badge-icon {
+  font-size: 1.5rem;
+}
+
+.plan-badge-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.plan-badge-label {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.plan-badge-tagline {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+}
+
+.plan-badge-rapid .plan-badge-icon-wrap {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.plan-badge-rapid .plan-badge-label {
+  color: #34d399;
+}
+
+.plan-badge-evolution .plan-badge-icon-wrap {
+  background: rgba(6, 182, 212, 0.15);
+  color: #67e8f9;
+  border: 1px solid rgba(6, 182, 212, 0.35);
+}
+
+.plan-badge-evolution .plan-badge-label {
+  color: #67e8f9;
+}
+
+.plan-badge-prime .plan-badge-icon-wrap {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.plan-badge-prime .plan-badge-label {
+  color: #fbbf24;
+}
