@@ -109,27 +109,6 @@
   text-decoration: underline;
 }
 
-.captcha-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.captcha-field label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-
-.captcha-hcaptcha {
-  display: flex;
-  justify-content: center;
-}
-
-.captcha-misconfigured {
-  color: #f59e0b;
-}
-
 .signup-page {
   min-height: calc(100vh - var(--nav-height));
   display: flex;

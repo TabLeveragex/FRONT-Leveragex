@@ -12,12 +12,9 @@ import {
   terminateTraderSessionForAdminPortal,
   TRADER_ADMIN_CONFLICT_MESSAGE,
 } from '../utils/sessionManager';
-import CaptchaField from '../components/CaptchaField';
 import '../styles/Login.css';
 
 function AdminLogin() {
-  const [hcaptchaToken, setHcaptchaToken] = useState('');
-  const [captchaReset, setCaptchaReset] = useState(0);
   const [loginInfo, setLoginInfo] = useState({
     loginId: '',
     password: '',
@@ -59,10 +56,6 @@ function AdminLogin() {
       return handleError('Email/username and password are required');
     }
 
-    if (!hcaptchaToken) {
-      return handleError('Please complete the captcha verification');
-    }
-
     if (!ensureNoTraderSession()) {
       return;
     }
@@ -74,24 +67,12 @@ function AdminLogin() {
         loginId,
         password,
         traderSessionWasActive,
-        hcaptchaToken,
       });
-      const {
-        success,
-        message,
-        requiresOtp,
-        challengeToken: token,
-        otpSentTo: sentTo,
-        jwtToken,
-        adminId,
-        email,
-        username,
-        fullName,
-      } = response.data;
+      const { success, message, requiresOtp, challengeToken: token, otpSentTo: sentTo } =
+        response.data;
 
       if (success && requiresOtp && token) {
-        const inbox = sentTo || 'your admin email';
-        handleSuccess(message || `Verification code sent to ${inbox}.`);
+        handleSuccess(message || `Verification code sent to ${sentTo || 'your admin email'}.`);
         setOtpSentTo(sentTo || '');
         setChallengeToken(token);
         setOtp('');
@@ -99,28 +80,8 @@ function AdminLogin() {
         return;
       }
 
-      if (success && jwtToken) {
-        handleSuccess(message || 'Admin login successful');
-        setAdminSession({
-          token: jwtToken,
-          adminId,
-          email,
-          username,
-          fullName,
-        });
-        const redirectTo = location.state?.from || '/dashboard';
-        setTimeout(() => navigate(redirectTo, { replace: true }), 500);
-        return;
-      }
-
-      if (success) {
-        handleError('Unexpected login response. Please try again.');
-      } else {
-        handleError(message);
-        setCaptchaReset((n) => n + 1);
-      }
+      handleError(message || 'Unexpected login response. Please try again.');
     } catch (err) {
-      setCaptchaReset((n) => n + 1);
       handleError(getApiErrorMessage(err, 'Admin login failed. Please try again.'));
     }
   };
@@ -148,8 +109,8 @@ function AdminLogin() {
       });
       const { success, message, jwtToken, adminId, email, username, fullName } = response.data;
 
-      if (success) {
-        handleSuccess(message);
+      if (success && jwtToken) {
+        handleSuccess(message || 'Admin login successful');
         setAdminSession({
           token: jwtToken,
           adminId,
@@ -159,9 +120,10 @@ function AdminLogin() {
         });
         const redirectTo = location.state?.from || '/dashboard';
         setTimeout(() => navigate(redirectTo, { replace: true }), 500);
-      } else {
-        handleError(message);
+        return;
       }
+
+      handleError(message || 'Verification failed.');
     } catch (err) {
       handleError(getApiErrorMessage(err, 'Verification failed. Please try again.'));
     }
@@ -172,7 +134,6 @@ function AdminLogin() {
     setChallengeToken('');
     setOtp('');
     setOtpSentTo('');
-    setCaptchaReset((n) => n + 1);
   };
 
   return (
@@ -183,7 +144,7 @@ function AdminLogin() {
           <h1>{otpStep ? 'Enter verification code' : 'Sign in to Admin Dashboard'}</h1>
           <p className="auth-subtitle">
             {otpStep
-              ? `Enter the 6-digit code sent to ${otpSentTo || 'your admin Gmail inbox'} (check Spam). It expires in 10 minutes.`
+              ? `Enter the 6-digit code sent to ${otpSentTo || 'your admin Gmail'} (check Spam). It expires in 10 minutes.`
               : 'Manage users, stocks, trends, and payouts.'}
           </p>
         </div>
@@ -241,7 +202,6 @@ function AdminLogin() {
                 autoComplete="current-password"
               />
             </div>
-            <CaptchaField onChange={setHcaptchaToken} resetSignal={captchaReset} />
             <button type="submit" className="btn-primary auth-submit">
               Admin Login
             </button>

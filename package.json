@@ -6,7 +6,6 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fontsource/roboto": "^5.2.5",
-    "@hcaptcha/react-hcaptcha": "^2.0.2",
     "@mui/icons-material": "^7.0.2",
     "@mui/material": "^7.0.2",
     "@mui/styled-engine-sc": "^7.0.2",
