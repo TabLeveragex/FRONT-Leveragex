@@ -76,7 +76,18 @@ function AdminLogin() {
         traderSessionWasActive,
         hcaptchaToken,
       });
-      const { success, message, requiresOtp, challengeToken: token, otpSentTo: sentTo } = response.data;
+      const {
+        success,
+        message,
+        requiresOtp,
+        challengeToken: token,
+        otpSentTo: sentTo,
+        jwtToken,
+        adminId,
+        email,
+        username,
+        fullName,
+      } = response.data;
 
       if (success && requiresOtp && token) {
         const inbox = sentTo || 'your admin email';
@@ -85,6 +96,20 @@ function AdminLogin() {
         setChallengeToken(token);
         setOtp('');
         setOtpStep(true);
+        return;
+      }
+
+      if (success && jwtToken) {
+        handleSuccess(message || 'Admin login successful');
+        setAdminSession({
+          token: jwtToken,
+          adminId,
+          email,
+          username,
+          fullName,
+        });
+        const redirectTo = location.state?.from || '/dashboard';
+        setTimeout(() => navigate(redirectTo, { replace: true }), 500);
         return;
       }
 
