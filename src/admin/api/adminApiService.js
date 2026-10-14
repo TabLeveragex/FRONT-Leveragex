@@ -26,4 +26,8 @@ export const usersService = {
 export const payoutService = {
   updateStatus: (userId, payoutStatus) =>
     adminApi.put(`/api/payout/${String(userId)}`, { payoutStatus }).then((r) => r.data),
+  createGatewayPayout: (payload) =>
+    adminApi.post('/api/payments/payout/create', payload).then((r) => r.data),
+  listGatewayPayouts: () =>
+    adminApi.get('/api/payments/payout/list').then((r) => r.data),
 };
