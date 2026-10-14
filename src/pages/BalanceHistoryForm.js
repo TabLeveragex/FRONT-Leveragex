@@ -22,6 +22,8 @@ const WithdrawalForm = () => {
   const [payoutForm, setPayoutForm] = useState(emptyPayoutForm);
   const [payouts, setPayouts] = useState([]);
   const [payoutLoading, setPayoutLoading] = useState(false);
+  const [outboundIp, setOutboundIp] = useState('');
+  const [ipLoading, setIpLoading] = useState(false);
 
   const loadPayouts = useCallback(async () => {
     try {
@@ -67,6 +69,22 @@ const WithdrawalForm = () => {
       ...prev,
       userId,
     }));
+  };
+
+  const loadOutboundIp = async () => {
+    setIpLoading(true);
+    try {
+      const res = await adminApi.get('/api/payments/payout/outbound-ip');
+      setOutboundIp(res.data?.ip || '');
+      if (!res.data?.ip) {
+        alert(res.data?.message || 'Could not detect Render IP.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || 'Could not detect Render IP.');
+    } finally {
+      setIpLoading(false);
+    }
   };
 
   const handlePayoutSubmit = async (e) => {
@@ -197,6 +215,25 @@ const WithdrawalForm = () => {
           <p className="withdrawal-subtitle">
             Admin-only. Sends a UPI payout through Divine Pay for the selected trader.
           </p>
+        </div>
+
+        <div className="glass-card withdrawal-card" style={{ marginBottom: '1rem' }}>
+          <p className="withdrawal-item-meta">
+            Divine Pay needs the Render backend outbound IP, not your home IP.
+          </p>
+          <button
+            type="button"
+            className="btn-primary withdrawal-submit"
+            onClick={loadOutboundIp}
+            disabled={ipLoading}
+          >
+            {ipLoading ? 'Detecting Render IP…' : 'Show Render outbound IP'}
+          </button>
+          {outboundIp ? (
+            <p className="withdrawal-item-amount" style={{ marginTop: '0.75rem' }}>
+              {outboundIp}
+            </p>
+          ) : null}
         </div>
 
         <div className="glass-card withdrawal-card">
