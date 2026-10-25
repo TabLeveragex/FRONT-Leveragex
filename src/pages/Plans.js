@@ -21,6 +21,19 @@ try {
   upiImg = null;
 }
 
+let inrLogo = null;
+let usdtLogo = null;
+try {
+  inrLogo = require('../Assets/inr-logo.svg');
+} catch {
+  inrLogo = null;
+}
+try {
+  usdtLogo = require('../Assets/usdt-logo.svg');
+} catch {
+  usdtLogo = null;
+}
+
 const PLAN_ROWS = [
   { name: 'Rapid', balance: '₹10,000', cost: '₹1,000', lifecycle: 'One Time' },
   { name: 'Evolution', balance: '₹50,000', cost: '₹5,000', lifecycle: 'Unlimited' },
@@ -35,6 +48,8 @@ const PLAN_PAY_AMOUNTS = {
 
 const CUSTOM_SUGGESTIONS = [5000, 10000, 15000, 25000, 50000, 100000];
 const CUSTOM_MIN = 1000;
+const USDT_SUGGESTIONS = [50, 100, 250, 500, 1000];
+const USDT_MIN = 10;
 
 function formatIndianCurrency(value) {
   const n = Number(value);
@@ -63,6 +78,8 @@ function Plans() {
   const [currentPlan, setCurrentPlan] = useState(null);
   const [gatewayLoading, setGatewayLoading] = useState(false);
   const [customAmountRaw, setCustomAmountRaw] = useState('');
+  const [usdtAmountRaw, setUsdtAmountRaw] = useState('');
+  const [cryptoLoading, setCryptoLoading] = useState(false);
   const [txnId, setTxnId] = useState('');
   const navigate = useNavigate();
 
@@ -96,6 +113,28 @@ function Plans() {
     }
   }, []);
 
+  const pollCryptoReturn = useCallback(async (orderId) => {
+    try {
+      const response = await api.get(`/api/payments/crypto/status/${encodeURIComponent(orderId)}`);
+      const { status, creditedAmount, amount } = response.data || {};
+      if (status === 'success') {
+        const credited = creditedAmount != null ? creditedAmount : amount;
+        handleSuccess(
+          `USDT payment successful! ₹${Number(credited).toLocaleString('en-IN', {
+            maximumFractionDigits: 2,
+          })} added to your trading balance.`
+        );
+        await refreshPlanStatus();
+      } else if (status === 'failed') {
+        handleError('USDT payment failed or expired. Please try again.');
+      } else {
+        handleError('USDT payment is still confirming. Refresh this page in a moment.');
+      }
+    } catch (err) {
+      handleError(getApiErrorMessage(err, 'Could not verify USDT payment status.'));
+    }
+  }, [refreshPlanStatus]);
+
   const pollPaymentReturn = useCallback(async (orderId) => {
     try {
       const response = await api.get(`/api/payments/payin/status/${encodeURIComponent(orderId)}`);
@@ -127,11 +166,17 @@ function Plans() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const orderId = params.get('orderId');
+    const cryptoOrderId = params.get('cryptoOrderId');
+    if (cryptoOrderId) {
+      pollCryptoReturn(cryptoOrderId);
+      window.history.replaceState({}, '', window.location.pathname);
+      return;
+    }
     if (orderId) {
       pollPaymentReturn(orderId);
       window.history.replaceState({}, '', window.location.pathname);
     }
-  }, [pollPaymentReturn]);
+  }, [pollPaymentReturn, pollCryptoReturn]);
 
   const startGatewayPayment = async (productType, amount) => {
     const mobile = localStorage.getItem('userMobile') || '';
@@ -224,6 +269,46 @@ function Plans() {
   const onCustomInputChange = (e) => {
     const digits = e.target.value.replace(/\D/g, '').slice(0, 9);
     setCustomAmountRaw(digits);
+  };
+
+  const usdtAmount = Number(usdtAmountRaw) || 0;
+
+  const onUsdtInputChange = (e) => {
+    const cleaned = e.target.value.replace(/[^\d.]/g, '');
+    const [whole, fraction] = cleaned.split('.');
+    const next = fraction != null ? `${whole}.${fraction.slice(0, 2)}` : whole;
+    setUsdtAmountRaw(next.slice(0, 12));
+  };
+
+  const handleUsdtPay = async () => {
+    if (usdtAmount < USDT_MIN) {
+      handleError(`Minimum USDT amount is ${USDT_MIN}.`);
+      return;
+    }
+
+    const mobile = localStorage.getItem('userMobile') || '';
+    if (!/^[0-9]{10}$/.test(mobile)) {
+      handleError('A valid 10-digit mobile number is required before payment.');
+      navigate('/signup');
+      return;
+    }
+
+    setCryptoLoading(true);
+    try {
+      const response = await api.post('/api/payments/crypto/create', {
+        amount: usdtAmount,
+      });
+      const { paymentUrl, success, message } = response.data || {};
+      if (success && paymentUrl) {
+        window.location.href = paymentUrl;
+        return;
+      }
+      handleError(message || 'USDT payment could not be started.');
+    } catch (err) {
+      handleError(getApiErrorMessage(err, 'USDT payment could not be started. Please try again.'));
+    } finally {
+      setCryptoLoading(false);
+    }
   };
 
   return (
@@ -343,59 +428,125 @@ function Plans() {
         <SectionHeading
           kicker="Flexible"
           title="Custom Add Funds"
-          subtitle="Pay any amount you choose — funds are credited to your trading balance after successful payment."
+          subtitle="Choose INR or USDT. Successful payments credit your trading balance."
         />
-        <div className="custom-exclusive-card">
-          <div className="custom-exclusive-badge">Any amount</div>
-          <h3>Enter amount to add</h3>
-          <p className="custom-exclusive-note">
-            A fixed ₹1 discount is applied: you pay and receive ₹1 less than the amount you enter
-            (e.g. enter ₹5,000 → pay and credit ₹4,999).
-          </p>
+        <div className="add-funds-grid">
+          <div className="custom-exclusive-card add-funds-inr">
+            <div className="add-funds-card-head">
+              {inrLogo ? <img src={inrLogo} alt="INR" className="add-funds-logo" /> : null}
+              <div>
+                <div className="custom-exclusive-badge">INR</div>
+                <h3>Pay with INR</h3>
+              </div>
+            </div>
+            <p className="custom-exclusive-note">
+              A fixed ₹1 discount is applied: you pay and receive ₹1 less than the amount you enter
+              (e.g. enter ₹5,000 → pay and credit ₹4,999).
+            </p>
 
-          <div className="custom-amount-suggestions">
-            {CUSTOM_SUGGESTIONS.map((value) => (
-              <button
-                key={value}
-                type="button"
-                className="amount-chip"
-                onClick={() => setCustomAmountRaw(String(value))}
-              >
-                {formatIndianCurrency(value)}
-              </button>
-            ))}
+            <div className="custom-amount-suggestions">
+              {CUSTOM_SUGGESTIONS.map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  className="amount-chip"
+                  onClick={() => setCustomAmountRaw(String(value))}
+                >
+                  {formatIndianCurrency(value)}
+                </button>
+              ))}
+            </div>
+
+            <label className="custom-amount-label" htmlFor="customAmount">
+              Amount (INR)
+            </label>
+            <div className="custom-amount-input-wrap">
+              <span className="currency-prefix">₹</span>
+              <input
+                id="customAmount"
+                type="text"
+                inputMode="numeric"
+                placeholder="e.g. 25,000"
+                className="custom-amount-input"
+                value={customAmountRaw ? Number(customAmountRaw).toLocaleString('en-IN') : ''}
+                onChange={onCustomInputChange}
+              />
+            </div>
+            <p className="custom-amount-preview">
+              You will pay: <strong>{formatIndianCurrency(customAmount || 0)}</strong>
+              {customAmount > 0 && customAmount < CUSTOM_MIN && (
+                <span className="custom-amount-warning"> (minimum {formatIndianCurrency(CUSTOM_MIN)})</span>
+              )}
+            </p>
+
+            <button
+              type="button"
+              className="buy-now-btn custom-pay-btn gateway-pay-btn"
+              onClick={handleCustomPay}
+              disabled={gatewayLoading || customAmount < CUSTOM_MIN}
+            >
+              {gatewayLoading ? 'Opening gateway…' : 'Pay INR'}
+            </button>
           </div>
 
-          <label className="custom-amount-label" htmlFor="customAmount">
-            Amount (INR)
-          </label>
-          <div className="custom-amount-input-wrap">
-            <span className="currency-prefix">₹</span>
-            <input
-              id="customAmount"
-              type="text"
-              inputMode="numeric"
-              placeholder="e.g. 25,000"
-              className="custom-amount-input"
-              value={customAmountRaw ? Number(customAmountRaw).toLocaleString('en-IN') : ''}
-              onChange={onCustomInputChange}
-            />
-          </div>
-          <p className="custom-amount-preview">
-            You will pay: <strong>{formatIndianCurrency(customAmount || 0)}</strong>
-            {customAmount > 0 && customAmount < CUSTOM_MIN && (
-              <span className="custom-amount-warning"> (minimum {formatIndianCurrency(CUSTOM_MIN)})</span>
-            )}
-          </p>
+          <div className="custom-exclusive-card add-funds-usdt">
+            <div className="add-funds-card-head">
+              {usdtLogo ? <img src={usdtLogo} alt="USDT" className="add-funds-logo" /> : null}
+              <div>
+                <div className="custom-exclusive-badge usdt-badge">USDT</div>
+                <h3>Pay with Crypto</h3>
+              </div>
+            </div>
+            <p className="custom-exclusive-note">
+              Pay USDT via Bee X checkout. Choose USDT TRC-20 or USDT BSC on the payment page.
+              After confirmation, the equivalent INR is added to your trading balance. USDT is for
+              payment only.
+            </p>
 
-          <button
-            type="button"
-            className="buy-now-btn custom-pay-btn gateway-pay-btn"
-            onClick={handleCustomPay}
-            disabled={gatewayLoading || customAmount < CUSTOM_MIN}
-          >
-            {gatewayLoading ? 'Opening gateway…' : 'Pay Now — Add Funds'}
-          </button>
+            <div className="custom-amount-suggestions">
+              {USDT_SUGGESTIONS.map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  className="amount-chip"
+                  onClick={() => setUsdtAmountRaw(String(value))}
+                >
+                  {value} USDT
+                </button>
+              ))}
+            </div>
+
+            <label className="custom-amount-label" htmlFor="usdtAmount">
+              Amount (USDT)
+            </label>
+            <div className="custom-amount-input-wrap">
+              <span className="currency-prefix">₮</span>
+              <input
+                id="usdtAmount"
+                type="text"
+                inputMode="decimal"
+                placeholder="e.g. 100"
+                className="custom-amount-input"
+                value={usdtAmountRaw}
+                onChange={onUsdtInputChange}
+              />
+            </div>
+            <p className="custom-amount-preview">
+              You will pay: <strong>{usdtAmount || 0} USDT</strong>
+              {usdtAmount > 0 && usdtAmount < USDT_MIN && (
+                <span className="custom-amount-warning"> (minimum {USDT_MIN} USDT)</span>
+              )}
+            </p>
+
+            <button
+              type="button"
+              className="buy-now-btn custom-pay-btn gateway-pay-btn"
+              onClick={handleUsdtPay}
+              disabled={cryptoLoading || usdtAmount < USDT_MIN}
+            >
+              {cryptoLoading ? 'Opening checkout…' : 'Pay USDT (TRC-20 / BSC)'}
+            </button>
+          </div>
         </div>
       </section>
 

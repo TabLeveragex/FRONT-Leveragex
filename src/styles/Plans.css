@@ -229,6 +229,37 @@
   margin-top: 3rem;
 }
 
+.add-funds-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+.add-funds-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 0.35rem;
+}
+
+.add-funds-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.usdt-badge {
+  background: rgba(38, 161, 123, 0.16);
+  color: #26a17b;
+}
+
+.add-funds-usdt {
+  background: linear-gradient(145deg, var(--bg-card) 0%, rgba(38, 161, 123, 0.08) 100%);
+}
+
 .custom-exclusive-card {
   position: relative;
   padding: 1.5rem;
@@ -343,6 +374,10 @@
 
 @media (max-width: 900px) {
   .plan-amt {
+    grid-template-columns: 1fr;
+  }
+
+  .add-funds-grid {
     grid-template-columns: 1fr;
   }
 }

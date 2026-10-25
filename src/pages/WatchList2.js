@@ -35,9 +35,9 @@ const WatchList2 = () => {
   };
 
   const fetchBalance = async () => {
-    if (!userId) return;
+    if (!localStorage.getItem('token')) return;
     try {
-      const response = await api.get(`/api/users/balance/${userId}`);
+      const response = await api.get('/api/users/me/stocks');
       const balance = Number(response.data.balance) || 0;
       setCurrentBalance(balance);
       setUpdatedBalance(balance);
