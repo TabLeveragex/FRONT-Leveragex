@@ -21,22 +21,15 @@ try {
   upiImg = null;
 }
 
+const inrLogo = require('../Assets/inr-logo.png');
+const usdtLogo = require('../Assets/usdt-logo.png');
+
 function InrLogo() {
-  return (
-    <svg className="add-funds-logo" viewBox="0 0 64 64" aria-hidden="true">
-      <circle cx="32" cy="32" r="32" fill="#2563eb" />
-      <text x="32" y="42" textAnchor="middle" fontSize="28" fontFamily="Arial, sans-serif" fontWeight="700" fill="#ffffff">₹</text>
-    </svg>
-  );
+  return <img className="add-funds-logo" src={inrLogo} alt="" />;
 }
 
 function UsdtLogo() {
-  return (
-    <svg className="add-funds-logo" viewBox="0 0 64 64" aria-hidden="true">
-      <circle cx="32" cy="32" r="32" fill="#26A17B" />
-      <path fill="#ffffff" d="M34.2 30.6v-6.3h8.6v-4.4H21.2v4.4h8.6v6.3c-7 .3-12.2 1.8-12.2 3.6 0 2 6.3 3.6 14.4 3.6s14.4-1.6 14.4-3.6c0-1.8-5.2-3.3-12.2-3.6zm-2.2 5.8c-8.1 0-14.7-1.4-14.7-3.2 0 4.6 6.6 8.4 14.7 8.4s14.7-3.8 14.7-8.4c0 1.8-6.6 3.2-14.7 3.2z" />
-    </svg>
-  );
+  return <img className="add-funds-logo add-funds-logo-usdt" src={usdtLogo} alt="" />;
 }
 
 const PLAN_ROWS = [
