@@ -21,17 +21,22 @@ try {
   upiImg = null;
 }
 
-let inrLogo = null;
-let usdtLogo = null;
-try {
-  inrLogo = require('../Assets/inr-logo.svg');
-} catch {
-  inrLogo = null;
+function InrLogo() {
+  return (
+    <svg className="add-funds-logo" viewBox="0 0 64 64" aria-hidden="true">
+      <circle cx="32" cy="32" r="32" fill="#2563eb" />
+      <text x="32" y="42" textAnchor="middle" fontSize="28" fontFamily="Arial, sans-serif" fontWeight="700" fill="#ffffff">₹</text>
+    </svg>
+  );
 }
-try {
-  usdtLogo = require('../Assets/usdt-logo.svg');
-} catch {
-  usdtLogo = null;
+
+function UsdtLogo() {
+  return (
+    <svg className="add-funds-logo" viewBox="0 0 64 64" aria-hidden="true">
+      <circle cx="32" cy="32" r="32" fill="#26A17B" />
+      <path fill="#ffffff" d="M34.2 30.6v-6.3h8.6v-4.4H21.2v4.4h8.6v6.3c-7 .3-12.2 1.8-12.2 3.6 0 2 6.3 3.6 14.4 3.6s14.4-1.6 14.4-3.6c0-1.8-5.2-3.3-12.2-3.6zm-2.2 5.8c-8.1 0-14.7-1.4-14.7-3.2 0 4.6 6.6 8.4 14.7 8.4s14.7-3.8 14.7-8.4c0 1.8-6.6 3.2-14.7 3.2z" />
+    </svg>
+  );
 }
 
 const PLAN_ROWS = [
@@ -433,7 +438,7 @@ function Plans() {
         <div className="add-funds-grid">
           <div className="custom-exclusive-card add-funds-inr">
             <div className="add-funds-card-head">
-              {inrLogo ? <img src={inrLogo} alt="INR" className="add-funds-logo" /> : null}
+              <InrLogo />
               <div>
                 <div className="custom-exclusive-badge">INR</div>
                 <h3>Pay with INR</h3>
@@ -491,7 +496,7 @@ function Plans() {
 
           <div className="custom-exclusive-card add-funds-usdt">
             <div className="add-funds-card-head">
-              {usdtLogo ? <img src={usdtLogo} alt="USDT" className="add-funds-logo" /> : null}
+              <UsdtLogo />
               <div>
                 <div className="custom-exclusive-badge usdt-badge">USDT</div>
                 <h3>Pay with Crypto</h3>
